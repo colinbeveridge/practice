@@ -4,10 +4,12 @@ import csv
 # create function that makes tournament slots
 def makeslots(numplayers):
     # make dictionary with all slot numbers, name slots empty for now
+    # since numplayers is user input we convert to int
+    numplayers = int(numplayers)
     keylist = list(np.arange(1,(numplayers+1)))
     participant_records = dict.fromkeys(keylist)
-    
-    return participant_records
+    saved = False
+    return participant_records,saved
 
 # define function for main menu interface
 def MainMenu(place):
@@ -64,6 +66,7 @@ def SignUp(participant_records):
             print('Success:')
             print(f'{participant_name} is signed up in starting slot #{desired_slot}.')
             slotfound = True
+            saved = False
         
         else:
             print('Error:')
@@ -113,6 +116,7 @@ def CancelSignUp(participant_records):
             print(f'{participant_records[cancel_slot]} has been removed from starting slot #{cancel_slot}')
             matchfound = True
             participant_records[cancel_slot] = None
+            saved = False
 
         # if nobody in slot, tell them that then reset them to enter again
         elif participant_records[cancel_slot] == None:
@@ -180,13 +184,39 @@ def SaveChanges(participant_records):
         save = input('Save your changes to CSV? [y/n]')
     
     if save == 'y':
-        file_name = 'your_tournament_data.csv'
+        file_name = 'c:/Users/cbevr/OneDrive/Documents/GitHub/practice/Tournament-Tracker/your_tournament_data.csv'
         with open(file_name,'w') as f:
             for key in participant_records.keys():
                 f.write("%s,%s\n"%(key,participant_records[key]))
-        
-        f.close()
+            f.close()
+        saved = True
+
+    else:
+        saved = False
 
     place = 0
-    saved = True
+    
     return place, saved
+
+def Exit(saved):
+    # function for exit menu, displays warning about unsaved changes if they exist
+    print('Exit')
+    print('=====')
+    # logic for unsaved changes
+    if not saved:
+        print('Warning: your document has unsaved changes. Any unsaved changes will be lost.')
+    
+    exit = ''
+    # while incorrect input, reprompt for y or n
+    while exit != 'y' and exit != 'n':
+        print('Please enter "y" to exit or "n" to continue editing your tournament.')
+        exit = input('Are you sure you want to exit? [y/n] ')
+
+    # do something based on what exit is
+    if exit == 'n':
+        place = 0
+    else:
+        place = None
+    print(place)
+    return place
+
