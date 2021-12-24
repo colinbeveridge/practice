@@ -19,6 +19,8 @@ def update_player_roundcash(players_info,playerID,cash):
         dict[2] = 0
     else:
         dict[2] += cash
+    
+    return players_info
 
 def update_player_allcash(players_info):
     # takes players information dictionary and playerID and updates that players total cash. only occurs at end of round.
