@@ -260,6 +260,64 @@ def playStandardRound(players_info,board,wentfirst=None):
     # return who went first this round in case we call this again for another round
     return players_info, max_round_index, max_total_index, wentfirst
 
+def show_board(board):
+    # prints current board for the player to see progress
+    print(board[0])
+
+def playFinalRound(board):
+    # function that runs the final round for the given player and board
+    # make list out of given letters
+    priorguesses = list('rstlne')
+
+    # apply all given guesses
+    for letter in priorguesses:
+        appearances,board,turnend = apply_guess(letter,board)
+    
+    # show board
+    print('Current board before your guesses: ')
+    show_board()
+    print('Guess 3 consonants.')
+
+    # get consonants
+    consonantslist = []
+    for i in range(3):
+        consonant,priorguesses = get_proper_guess(priorguesses,want_vowel=False)
+        consonantslist.append(consonant)
+
+    # get vowel
+    vowel,priorguesses = get_proper_guess(priorguesses,want_vowel=True)
+    
+    # merge lists
+    finalguesslist = consonantslist.append(vowel)
+
+    # apply final guesses
+    for letter in finalguesslist:
+        appearances,board,turnend = apply_guess(letter,board)
+
+    # show boad again
+    print('After all your guesses, here is the board. Time for your final guess.')
+    show_board()
+
+    # initialize final guess
+    finalguess = ''
+
+    # Keep prompting until user enters guess of correct length
+    while len(finalguess) != len(board[2]):
+        print('Make sure your final guess is the same length as the board.')
+        finalguess = input('Final Guess: ')
+
+    # standardize casing    
+    finalguess = finalguess.lower()
+    
+    # check if correct
+    iscorrect = finalguess == board[2]
+
+    # can do congratulating in the game function
+    return iscorrect
+    
+
+
+
 
 if __name__ == '__main__':
     guess = input('full guess: ')
