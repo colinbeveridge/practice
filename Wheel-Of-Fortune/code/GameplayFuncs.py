@@ -3,50 +3,6 @@ import numpy as np
 import WheelFuncs as WF
 import PlayerInfo as PI
 
-def get_proper_guess(priorguesses,want_vowel=False):
-    # function that defines a consonant and only allows advancement once a consonant has been entered
-    alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'}
-    vowels = {'a','e','i','o','u'}
-    consonants = alphabet - vowels
-
-    #boolean for when the guess given matches the desired type
-    guessinset = False
-
-    # boolean for when the guess is already in the puzzle (has already been guessed)
-    alreadyguessed = True
-    # initialize guess for logic
-    
-
-    while guessinset == False or alreadyguessed == True:
-        # initailize boolean to reask if something tripped (if it was in the set but was already guessed, we have to check new guess is in set first)
-        guessinset = False
-        # reset guess
-        guess = None
-        if want_vowel == False:
-            while guess not in consonants:
-                # if we want a consonant and then we have to keep taking inputs until we get a consonant
-                guess = input('Enter a lowercase consonant: ')
-                
-        
-        else:
-            while guess not in vowels:
-                # if want a vowel, keep getting input til we get a vowel
-                guess = input('Enter a lowercase vowel: ')
-        # now we have gotten a guess in the desired set, flip first variable
-        guessinset = True
-
-        # now check if already guessed
-        if guess in priorguesses:
-            print('That letter has already been guessed. Try again.')
-        
-        else:
-            alreadyguessed = False
-
-    # once guess is proper, add it to priorguesses so it cannot be guessed again
-    priorguesses.append(guess)
-
-    return guess,priorguesses
-
 def load_words():
     with open('words_alpha.txt') as word_file:
         valid_words = list(word_file.read().split())
@@ -55,7 +11,7 @@ def load_words():
 
 def generate_board(wordlist):
     # takes one of the words in the large word list and makes it the solution to the puzzle
-    # board is a tuple, first entry is empty board to be guessed on, second is full board for comparing
+    # board is a list, first entry is empty board to be guessed on, second is full board for comparing, third is the answer in a string for full compare
     selectword = np.random.randint(1,len(wordlist)+1)
     word = wordlist[selectword]
     answer = list(word)
@@ -63,42 +19,6 @@ def generate_board(wordlist):
     
     
     return board
-
-
-def playStandardRound(players_info,board,priorguesses,wentfirst=None):
-    # defines the full playing of one round. takes list of player info dictionaries and the index of the player that went first in the first round
-    # wentfirst=None if in first round. wentfirst= (who went first in first round) if in second round
-    # returns wentfirst (who went first for past round)
-    # for one round we also have to generate the board, so here is where we will call the function that generates the board
-
-    # get number of players
-    numplayers = len(players_info)
-    if wentfirst != None:
-        # if somebody went first last round, then we are randomly generating the starter between one less player
-        numplayers -= 1
-        
-    # set randomly to one of the three players
-    counter = np.random.randint(1,numplayers+1)
-
-    # initialize empty list for priorguesses
-    priorguesses = []
-    # set variable for while loop ending round
-    endround = False
-
-    
-    
-
-    while not endround:
-        # defines which players turn it is for this while loop iteration
-        turn = counter%numplayers
-        # standard turn will return true if the round ended
-        endround = playStandardTurn(players_info,turn,board,priorguesses)
-        counter += 1
-
-    # ocne round ends, we update the player cash information
-    players_info = PI.update_player_allcash(players_info)
-
-    return 
 
 def ask_vowel():
     # user can decide if they want to buy a vowel
@@ -128,6 +48,49 @@ def ask_solve():
         want_solve = False
     
     return want_solve
+
+def get_proper_guess(priorguesses,want_vowel=False):
+    # function that defines the sets of letters that a proper guess can be in and only allows advancement if in the correct set
+    # for the full guess, the logic in the turn function skips this, so it does not account for a full word
+    alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'}
+    vowels = {'a','e','i','o','u'}
+    consonants = alphabet - vowels
+
+    #boolean for when the guess given matches the desired type
+    guessinset = False
+
+    # boolean for when the guess is already in the puzzle (has already been guessed)
+    alreadyguessed = True
+    # initialize guess for logic
+    
+    while guessinset == False or alreadyguessed == True:
+        # initailize boolean to reask if something tripped (if it was in the set but was already guessed, we have to check new guess is in set first)
+        guessinset = False
+        # reset guess
+        guess = None
+        if want_vowel == False:
+            while guess not in consonants:
+                # if we want a consonant and then we have to keep taking inputs until we get a consonant
+                guess = input('Enter a lowercase consonant: ')
+                
+        else:
+            while guess not in vowels:
+                # if want a vowel, keep getting input til we get a vowel
+                guess = input('Enter a lowercase vowel: ')
+        # now we have gotten a guess in the desired set, flip first variable
+        guessinset = True
+
+        # now check if already guessed
+        if guess in priorguesses:
+            print('That letter has already been guessed. Try again.')
+        
+        else:
+            alreadyguessed = False
+
+    # once guess is proper, add it to priorguesses so it cannot be guessed again
+    priorguesses.append(guess)
+
+    return guess,priorguesses
 
 def apply_guess(guess,board):
     # since this guess logic will repeated, we put it in a function
@@ -160,7 +123,6 @@ def apply_guess(guess,board):
                 puzzlestatus[index] = wordlist[index]
         print(puzzlestatus)
 
-       
     return appearances,board,turnend
 
 def check_solved(board):
@@ -168,27 +130,47 @@ def check_solved(board):
     issolved = board[0] == board[1]
     return issolved
 
-
 def playStandardTurn(players_info,turn,board,priorguesses):
     # this defines one players turn. turn picks the player from player info
     print(f'Player {turn+1}"s turn.')
-    
-
 
     # boolean variable for if turn ends
+    # boolean variable for if round ends
     turnend = False
+    roundend = False
 
-    # guesses so far counter so we know to ask them if they want to buy a vowel
+    # guess counter so we know to ask them if they want to buy a vowel
     guesscounter = 0
 
     # if cash is not 0 or None, then we have to guess
     while not turnend:
+        # on each iteration the user should have an opportunity to say they want to solve the puzzle
+        want_solve = ask_solve()
+
+        # this code block handles if player wants to guess the puzzle
+        if want_solve:
+            guess = input('What do you think the word is? ')
+            guess = guess.lower()
+            iscorrect = guess == board[2]
+
+            if iscorrect:
+                print('Congratualations! You have guessed the word correctly. The round is over.')
+                # here we apply the correct guess to the board
+                appearances,board,turnend = apply_guess(guess,board)
+                # if guessed correctly, we end the round as well
+                roundend = True
+            print(board[0])
+            # regardless of correct or not, turn will end when person attempts solve     
+            turnend = True
+            break
         
-        # to start turn we spin
+        # to start turn we spin if user didn't try to guess
         cash = WF.spinWheel()
         # if we get bankrupt or lose a turn we end the turn
         if cash == None or cash == 0:
             turnend = True
+            # bankrupt them if bankrupt, just skip turn if skip turn
+            players_info = PI.update_player_roundcash(players_info,turn,cash)
         
         else:
             if guesscounter == 0:
@@ -206,58 +188,78 @@ def playStandardTurn(players_info,turn,board,priorguesses):
             else:
             # now if guesscounter is above 0 and we run through loop again, it means they have already guessed their first consonant
             # allow them to buy a vowel
-            # on each iteration beyond the first the user should have an opportunity to say they want to solve the puzzle
-                want_solve = ask_solve()
+            
+                want_vowel = ask_vowel()
 
-                if want_solve:
-                    guess = input('What do you think the word is? ')
-                    guess = guess.lower()
-                    iscorrect = guess == board[2]
+                if want_vowel:
+                    # the user has specified they want to buy a vowel
+                    # now they have to guess a vowel that hasn't already been guessed
+                    guess,priorguesses = get_proper_guess(priorguesses,want_vowel)
+                    # now that we have guess, check if guess is in the correct answer
+                    appearances,board,turnend = apply_guess(guess,board)
+                    # cash should be minus 250 if we buy a vowel
+                    cash = -250
+                    # this line gets the locations of each appearance of the guess in the word
+                    players_info = PI.update_player_roundcash(players_info,turn,cash)
+                    # now check after full updates if we solved the puzzle on that guess
+                    roundend = check_solved(board)
 
-                    if iscorrect:
-                        print('Congratualations! You have guessed the word correctly. The round is over.')
-                        # here we apply the correct guess to the board
-                        appearances,board,turnend = apply_guess(guess,board)
-                        # if guessed correctly, we end the round as well
-                        roundend = True
-
-                    # regardless of correct or not, turn will end when person attempts solve     
-                    turnend = True
-                
                 else:
-                    want_vowel = ask_vowel()
-
-                    if want_vowel:
-                        # the user has specified they want to buy a vowel
-                        # now they have to guess a vowel that hasn't already been guessed
-                        guess,priorguesses = get_proper_guess(priorguesses,want_vowel)
-                        # now that we have guess, check if guess is in the correct answer
-                        appearances,board,turnend = apply_guess(guess,board)
-                        # cash should be minus 250 if we buy a vowel
-                        cash = -250
-                        # this line gets the locations of each appearance of the guess in the word
-                        players_info = PI.update_player_roundcash(players_info,turn,cash)
-                        # now check after full updates if we solved the puzzle on that guess
-                        roundend = check_solved(board)
-
-                    
-                    else:
-                        # user does not want vowel, is guessing consonant with cash value defined above after wheel spin
-                        guess,priorguesses = get_proper_guess(priorguesses,want_vowel)
-                        # now that we have guess, check if guess is in the correct answer
-                        appearances,board,turnend = apply_guess(guess,board)
-                        # cash should be minus 250 if we buy a vowel
-                        cash *= appearances
-                        # this line gets the locations of each appearance of the guess in the word
-                        players_info = PI.update_player_roundcash(players_info,turn,cash)
-                        # check fully solved
-                        roundend = check_solved(board)
-
+                    # user does not want vowel, is guessing consonant with cash value defined above after wheel spin
+                    guess,priorguesses = get_proper_guess(priorguesses,want_vowel)
+                    # now that we have guess, check if guess is in the correct answer
+                    appearances,board,turnend = apply_guess(guess,board)
+                    # cash should be minus 250 if we buy a vowel
+                    cash *= appearances
+                    # this line gets the locations of each appearance of the guess in the word
+                    players_info = PI.update_player_roundcash(players_info,turn,cash)
+                    # check fully solved
+                    roundend = check_solved(board)
         
+        # if the round ended in one of the loops, tell the loop so it can end the turn as well
+        if roundend:
+            turnend = True
+
     # return boolean for if the round ended
     return roundend
 
+def playStandardRound(players_info,board,wentfirst=None):
+    # defines the full playing of one round. takes list of player info dictionaries and the index of the player that went first in the first round
+    # wentfirst=None if in first round. wentfirst= (who went first in first round) if in second round
+    # returns wentfirst (who went first for past round)
+    # for one round we also have to generate the board, so here is where we will call the function that generates the board
+
+    # initialize empty list for priorguesses
+    priorguesses = []
+    # set variable for while loop ending round
+    endround = False
+
+    # get number of players
+    numplayers = len(players_info)
+
+    # randomly select player to go first
+    counter = np.random.randint(1,numplayers+1)
     
+    while counter == wentfirst:
+        # if selected player already went first, pick new random until someone who didn't go first
+        counter = np.random.randint(1,numplayers+1)
+
+    # capture who ends up going first for this round
+    wentfirst = counter
+
+    while not endround:
+        # defines which players turn it is for this while loop iteration, mod divide maps us back over the number of players infinitely
+        turn = counter%numplayers
+        # standard turn will return true if the round ended
+        endround = playStandardTurn(players_info,turn,board,priorguesses)
+        counter += 1
+
+    # round ends, we update the player total cash information
+    players_info,max_round_index,max_total_index = PI.update_player_allcash(players_info)
+
+    # return who went first this round in case we call this again for another round
+    return players_info, max_round_index, max_total_index, wentfirst
+
 
 if __name__ == '__main__':
     guess = input('full guess: ')

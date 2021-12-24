@@ -1,5 +1,16 @@
 # functions that generate, track and update player information
 
+def find_max_index(players_info,key):
+    # given player info dictionaries and the index of the field we want to find max of, returns index of player with max that value
+    cashlist = []
+    for player in players_info:
+        cashlist.append(player[key])
+
+    max_value = max(cashlist)
+    max_index = cashlist.index(max_value)
+
+    return max_index
+
 def generate_players(numplayers):
     # takes number of players and returns that many dictionaries with info on each player
     players_info = []
@@ -25,22 +36,21 @@ def update_player_roundcash(players_info,playerID,cash):
 def update_player_allcash(players_info):
     # takes players information dictionary and playerID and updates that players total cash. only occurs at end of round.
     # returns a round winner index in case we need to go to round 3
-    cashlist = []
-    for playerdict in players_info:
-        cashlist.append(playerdict[2])
-    
-    # now find max in list
-    max_value = max(cashlist)
-
-    max_index = cashlist.index(max_value)
+    # first find max index for round cash, key for round cash in dictionary is 2
+    max_round_index = find_max_index(players_info,2)
 
     # now the player with max cash sends their round cash to their total cash
-    maxplayerdict = players_info[max_index]
+    maxplayerdict = players_info[max_round_index]
+
     # add round cash to total for winner
     maxplayerdict[1] += maxplayerdict[2]
+
     # reset round cash to 0 for all players
-    for playerdict in players_info:
-        playerdict[2] = 0
+    for players in players_info:
+        players[2] = 0
     
-    # returns the index of the highest cash player, aka the index of the winner of that round
-    return max_index
+    # now find max index for total cash and return at end of function
+    max_total_index = find_max_index(players_info,1)
+
+    # returns list of player info and the index of the highest cash player, aka the index of the winner of that round
+    return players_info, max_round_index, max_total_index
