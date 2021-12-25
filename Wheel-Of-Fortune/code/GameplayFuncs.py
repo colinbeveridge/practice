@@ -23,7 +23,7 @@ def generate_board(wordlist):
 def ask_vowel():
     # user can decide if they want to buy a vowel
     want_vowel = None
-    while want_vowel != 'y' or want_vowel != 'n':
+    while want_vowel != 'y' and want_vowel != 'n':
         want_vowel = input('Would you like to buy a vowel? [y/n] ')
     
     # convert to boolean
@@ -37,7 +37,7 @@ def ask_vowel():
 def ask_solve():
     # ask the user if they would like to solve the puzzle
     want_solve = None
-    while want_solve != 'y' or want_solve != 'n':
+    while want_solve != 'y' and want_solve != 'n':
         # get input from user
         want_solve = input('Would you like to solve the puzzle? [y/n] ')
     
@@ -132,8 +132,8 @@ def check_solved(board):
 
 def playStandardTurn(players_info,turn,board,priorguesses):
     # this defines one players turn. turn picks the player from player info
-    print(f'Player {turn+1}"s turn.')
-
+    print(f'Player {turn+1}\'s turn.')
+    show_board(board)
     # boolean variable for if turn ends
     # boolean variable for if round ends
     turnend = False
@@ -154,9 +154,10 @@ def playStandardTurn(players_info,turn,board,priorguesses):
             iscorrect = guess == board[2]
 
             if iscorrect:
-                print('Congratualations! You have guessed the word correctly. The round is over.')
                 # here we apply the correct guess to the board
                 appearances,board,turnend = apply_guess(guess,board)
+                # print congrats
+                print('Congratulations! You have guessed the word correctly. The round is over.')
                 # if guessed correctly, we end the round as well
                 roundend = True
             print(board[0])
@@ -219,7 +220,7 @@ def playStandardTurn(players_info,turn,board,priorguesses):
         # if the round ended in one of the loops, tell the loop so it can end the turn as well
         if roundend:
             turnend = True
-
+    print(players_info)
     # return boolean for if the round ended
     return roundend
 
@@ -315,10 +316,6 @@ def playFinalRound(board):
     # can do congratulating in the game function
     return iscorrect
     
-
-
-
-
 if __name__ == '__main__':
     guess = input('full guess: ')
     board = [['-','-','-','-','-','-'],['a','b','b','c','a','b'],'abbcab']
