@@ -32,7 +32,6 @@ def update_player_roundcash(players_info,player_index,cash):
         player['round_cash'] = 0
     else:
         player['round_cash'] += cash
-        print(player['round_cash'])
     
     return players_info
 
