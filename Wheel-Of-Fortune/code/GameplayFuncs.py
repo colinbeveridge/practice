@@ -9,13 +9,12 @@ def load_words():
 
     return valid_words
 
-def generate_board(wordlist):
+def generate_board(phrase):
     # takes one of the words in the large word list and makes it the solution to the puzzle
     # board is a list, first entry is empty board to be guessed on, second is full board for comparing, third is the answer in a string for full compare
-    selectword = np.random.randint(1,len(wordlist)+1)
-    word = wordlist[selectword]
-    answer = list(word)
-    board = [['-']*len(word),answer,word]
+    
+    answer = list(phrase)
+    board = [['-']*len(answer),answer,phrase]
     
     
     return board
@@ -63,8 +62,7 @@ def get_proper_guess(priorguesses,want_vowel=False):
     #boolean for when the guess given matches the desired type
     guessinset = False
 
-    # boolean for when the guess is already in the puzzle (has already been guessed)
-    alreadyguessed = True
+    
     # initialize guess for logic
     
     while guessinset == False:
@@ -130,6 +128,18 @@ def apply_guess(guess,board):
                     puzzlestatus[index] = wordlist[index]
 
     return appearances,board,turnend
+
+def apply_space(board):
+    # applies all spaces to board so user knows where they are
+    word = board[2]
+    wordlist = board[1]
+    puzzlestatus = board[0]
+    locations = [i for i in range(len(word)) if word.startswith(' ', i)]
+
+    for j in locations:
+        puzzlestatus[j] = wordlist[j]
+    
+    return board
 
 def check_solved(board):
     # function that takes the board and sees if the puzzle has been solved yet
@@ -235,6 +245,8 @@ def playStandardRound(players_info,board,wentfirst=None):
     # returns wentfirst (who went first for past round)
     # for one round we also have to generate the board, so here is where we will call the function that generates the board
 
+    # apply all spaces to board to show user where spaces are
+    board = apply_space(board)
     # initialize empty list for priorguesses
     priorguesses = []
     # set variable for while loop ending round
@@ -282,11 +294,11 @@ def playFinalRound(board):
     # get consonants
     finalguesslist = []
     for i in range(3):
-        consonant,priorguesses = get_proper_guess(priorguesses,want_vowel=False)
+        consonant,priorguesses,_ = get_proper_guess(priorguesses,want_vowel=False)
         finalguesslist.append(consonant)
 
     # get vowel
-    vowel,priorguesses = get_proper_guess(priorguesses,want_vowel=True)
+    vowel,priorguesses,_ = get_proper_guess(priorguesses,want_vowel=True)
     
     # merge lists
     finalguesslist.append(vowel)

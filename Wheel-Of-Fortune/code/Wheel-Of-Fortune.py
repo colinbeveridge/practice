@@ -2,12 +2,16 @@ import numpy as np
 import WheelFuncs as WF
 import PlayerInfo as PI
 import GameplayFuncs as GF
+import WebscrapeAnswers as WA
 
 def playWOF(numplayers,numstandardrounds):
     # takes a number of players and a number of standard rounds to play and plays wheel of fortune
     # generate the players
     players_info = PI.generate_players(numplayers)
     keystrings = ['player_ID','total_cash','round_cash']
+    # import full board options dictionary
+    print('Loading answer dictionary.')
+    answers = WA.load_answers()
 
     
 
@@ -18,7 +22,7 @@ def playWOF(numplayers,numstandardrounds):
         # play this many standard rounds
         # define the board and answer for that round
         print(f'Begin Round {i+1}')
-        board = GF.generate_board(GF.load_words())
+        board = GF.generate_board((WA.select_answer(answers).lower()))
         players_info,max_round_index,max_total_index,wentfirst = GF.playStandardRound(players_info,board,wentfirst)
     
     # console our two losers
@@ -38,7 +42,7 @@ def playWOF(numplayers,numstandardrounds):
     print(f'Then, you will be asked to solve the puzzle.')
     print()
     print()
-    board = GF.generate_board(GF.load_words())
+    board = GF.generate_board(WA.select_answer(answers).lower())
     win  = GF.playFinalRound(board)
 
     # final messages and updates for if win or lose
@@ -48,6 +52,7 @@ def playWOF(numplayers,numstandardrounds):
     
     else:
         print('You lose. Better luck next time.')
+        print(f'The correct answer was {board[2]}.')
         print('On the bright side, you still take home some money.')
     
     print(f'Your total winnings from today are ${winner[keystrings[1]]}. Thanks for playing!')
