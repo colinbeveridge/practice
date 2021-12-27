@@ -279,6 +279,8 @@ def playStandardRound(players_info,board,wentfirst=None):
 
 def playFinalRound(board):
     # function that runs the final round for the given player and board
+    # apply spaces
+    board = apply_space(board)
     # make list out of given letters
     priorguesses = list('rstlne')
 
