@@ -5,7 +5,7 @@ import time
 import json
 filename = '911_Calls_for_Service_(Last_30_Days).csv'
 def make_dictionaries_from_csv(csvfile):
-    with open(filename,'r',encoding='utf-8-sig') as inp:
+    with open(csvfile,'r',encoding='utf-8-sig') as inp:
         reader = csv.DictReader(inp)
         readerlist = list(reader)
         dictlist = []

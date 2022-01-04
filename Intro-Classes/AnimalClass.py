@@ -1,6 +1,6 @@
 class Animal:
     '''Animal Class'''
-    def __init__(self,name,species,family,genus,age):
+    def __init__(self,name,species,family,genus,age=None):
         self._name = name
         self._species = species
         self._family = family
@@ -60,5 +60,7 @@ if __name__ == '__main__':
     zebra1 = Animal('Bob','Zebra','Horses','Equus',25)
     zebra2 = Animal('Tom','Zebra','Horses','Equus',18)
     lion1 = Animal('John','P. Leo','Felidae','Panthera',12)
-    print(lion1._name)
-    lion1.play()
+    lion2 = Animal('Steve','P. Leo', family=None,genus='Panthera',age=20)
+    print(lion2.genus)
+    print(lion2.family)
+    cat = Animal('Meowth')
