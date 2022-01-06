@@ -1,4 +1,4 @@
-GET https://www.balldontlie.io/api/v1/players/237 HTTP/1.1
+GET https://www.balldontlie.io/api/v1/players?first_name=Stephen HTTP/1.1
 
 ###
 
@@ -14,7 +14,7 @@ GET https://www.balldontlie.io/api/v1/stats HTTP/1.1
 
 ###
 
-GET https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=1&player_ids[]=2 HTTP/1.1
+GET https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids HTTP/1.1
 
 
 

@@ -25,7 +25,13 @@ for pod in articles:
     starrate = str_to_int(ratestr)
     book['rating'] = starrate
     pricestr = pod.find('div',attrs={'class':'product_price'}).find('p',attrs={'class':'price_color'})
-    
+    pricestr = str(pricestr)
+    stringlist = pricestr.split('>')
+    price = stringlist[1][1:7]
+    book['price'] = price
+    books.append(book)
+
+print(books)    
     
 
 
