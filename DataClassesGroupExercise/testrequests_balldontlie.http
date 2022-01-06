@@ -1,0 +1,20 @@
+GET https://www.balldontlie.io/api/v1/players/237 HTTP/1.1
+
+###
+
+GET https://www.balldontlie.io/api/v1/teams HTTP/1.1
+
+###
+
+GET https://www.balldontlie.io/api/v1/games HTTP/1.1
+
+###
+
+GET https://www.balldontlie.io/api/v1/stats HTTP/1.1
+
+###
+
+GET https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=1&player_ids[]=2 HTTP/1.1
+
+
+

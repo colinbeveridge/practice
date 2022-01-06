@@ -1,0 +1,26 @@
+GET https://www.chess.com/news/view/published-data-api#pubapi-endpoint-player HTTP/1.1
+###
+
+GET /commonplayerinfo HTTP/1.1
+
+
+###
+
+POST / HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+###
+
+GET https://pokeapi.co/api/v2/pokemon HTTP/1.1
+Content-Type: application/json
+
+###
+
+GET https://pokeapi.co/api/v2/pokemon/13/ HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST https://pokeapi.co/api/v2/item/2 HTTP/1.1
+Content-Type: application/json
