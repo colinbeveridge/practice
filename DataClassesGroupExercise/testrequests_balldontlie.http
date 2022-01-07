@@ -1,4 +1,4 @@
-GET https://www.balldontlie.io/api/v1/players?first_name=Stephen HTTP/1.1
+GET https://www.balldontlie.io/api/v1/players/2 HTTP/1.1
 
 ###
 
